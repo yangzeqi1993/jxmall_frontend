@@ -65,11 +65,11 @@
         },
 
         methods: {
-            _commit: async function() {
+            _commit: function() {
                 if(this.phoneInput.length !== 11){
                     alert("请输入正确的手机号。")
                 }else {
-                    await axios.post('/receiver/add/', {
+                    axios.post('/receiver/add/', {
                         receiverId: document.getElementById("id").value,
                         userId:1,
                         receiverName: document.getElementById("name").value,
@@ -78,11 +78,11 @@
                 })
                     .then(function (response) {
                         console.log(response);
+                        window.location.href = "/myAddress";
                     })
                     .catch(function (error) {
                         console.log(error);
                     });
-                    window.location.href = "/myAddress";
                 }
             }
 

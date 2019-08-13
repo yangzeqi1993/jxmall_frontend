@@ -32,42 +32,48 @@
   import axios from 'axios';
 
   export default {
-    name: 'Login',
-    data() {
-      return {
 
-        AcctNo: '',
+     name: 'Login',
 
-        PassWord: '',
-        id: '',
+        data() {
+           return {
+           msg: '欢迎来到京西商城',
+        };
+      },
 
-        msg: '欢迎来到京西商城',
-      };
-    },
+     methods: {
 
-    methods: {
+        commit: function () {
 
-      commit: async function postData () {
-         await axios.post('http://localhost:5000/interface/', {
+           let acctNo = document.getElementById("AcctNo").value;
+           let passWord = document.getElementById("PassWord").value;
 
-          name: document.getElementById('AcctNo').value,
+           if(acctNo==='' || passWord===''){
+              console.log("账号或密码不能为空！");
+           }else {
+              axios.get('/userInfo/login/username=' + acctNo + '?password=' + passWord)
+                 .then(response => {
+                    if(!response.data){
+                       console.log("请输入正确的账号和密码。");
+                    }else {
+                       // sessionStorage接收的数据为string，因此将返回的json对象转换为string
+                       let ses = window.sessionStorage;
+                       let jsonString = JSON.stringify(response.data[0]);
+                       // 把拿到的返回结果放在sessionStorage中
+                       ses.setItem('data',jsonString);
+                       window.location.href = "/MyJX";
+                    }
+                 })
+                 .catch(function (error) {
+                       console.log(error);
+                 });
+           }
+        }
 
-          phone: document.getElementById('PassWord').value,
-          id: document.getElementById('id').value
-        })
-
-                .then(function (response) {
-                  console.log(response)
-                })
-
-                .catch(function (error) {
-                  console.log(error)
-                });
-        window.location.href = '/myjx'
-      }
-    }
+     }
   };
 </script>
+
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="stylus">

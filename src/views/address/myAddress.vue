@@ -82,16 +82,16 @@
                 window.location.href = "/address/newAdd";
             },
 
-            _delete: async function(radioId){
+            _delete: function(radioId){
                 console.log('被选中的值为:'+ radioId);
-                await axios.delete('/receiver/delReceiver/userId='+this.getUserId+'&receiverId='+radioId)
+                axios.delete('/receiver/delReceiver/userId='+this.getUserId+'&receiverId='+radioId)
                     .then(function (response) {
                         console.log(response);
+                        window.location.href = "/myAddress";
                     })
                     .catch(function (error) {
                         console.log(error);
                     });
-                window.location.href = "/myAddress";
             }
 
         }
