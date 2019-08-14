@@ -86,7 +86,7 @@
                 axios.delete('/receiver/delReceiver/userId='+this.getUserId+'&receiverId='+radioId)
                     .then(function (response) {
                         console.log(response);
-                        window.location.href = "/myAddress";
+                        window.location.reload();
                     })
                     .catch(function (error) {
                         console.log(error);

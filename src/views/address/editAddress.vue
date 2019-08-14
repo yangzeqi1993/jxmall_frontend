@@ -6,24 +6,27 @@
             <td><label>姓名：</label></td>
             <td>
                 <label>
-                    <input type="text" onkeyup="value=value.replace(/[^\u4E00-\u9FA5\a-zA-Z]/gi,'')" v-model="item.receiverName"/>
+                    <input type="text" onkeyup="value=value.replace(/[^\u4E00-\u9FA5\a-zA-Z]/gi,'')" v-model="item.receiverName" @click="_inputName"/>
                 </label>
                 <span style="color:red">*</span>
+                <span class="promptText">{{namePrompt}}</span>
             </td>
         </tr>
         <tr>
             <td><label>联系电话：</label></td>
             <td>
                 <!--使用onkeyup方法和type=tel，使文本框只能输入数字-->
-                <label><input type="tel" onkeyup="value=value.replace(/[^\d]/g,'')"  v-model="item.receiverPhone" /></label>
+                <label><input type="tel" onkeyup="value=value.replace(/[^\d]/g,'')"  v-model="item.receiverPhone" @click="_inputPhone"/></label>
                 <span style="color:red">*</span>
+                <span class="promptText">{{phonePrompt}}</span>
             </td>
         </tr>
         <tr>
             <td><label>收货地址：</label></td>
             <td>
-                <label><input type="text" v-model="item.receiverAddressInfo" style="width:400px;" maxlength="1000"/></label>
+                <label><input type="text" v-model="item.receiverAddressInfo" style="width:400px;" maxlength="1000" @click="_inputAddress"/></label>
                 <span style="color:red">*</span>
+                <span class="promptText">{{addressPrompt}}</span>
             </td>
         </tr>
         <tr>
@@ -52,6 +55,10 @@
 
         data() {
             return {
+                namePrompt:"",
+                phonePrompt:"",
+                addressPrompt:"",
+
                 getUserId:"",
                 item: ""
             }
@@ -78,14 +85,30 @@
                 });
             },
 
+            _inputName: function(){
+                this.namePrompt = "";
+            },
+
+            _inputPhone: function(){
+                this.phonePrompt = "";
+            },
+
+            _inputAddress: function(){
+                this.addressPrompt = "";
+            },
+
             _cancel: function () {
                 window.location.href = "/address";
             },
 
             _save: function () {
-                if(this.item.receiverPhone.length !== 11){
-                    alert("请输入正确的手机号。")
-                }else {
+                if(!this.item.receiverName){
+                    this.namePrompt = "姓名不能为空";
+                }else if(this.item.receiverPhone.length !== 11){
+                    this.phonePrompt = "请输入正确的手机号";
+                }else if(!this.item.receiverAddressInfo){
+                    this.addressPrompt = "收货地址不能为空";
+                }else{
                     axios.put('/receiver/updReceiver/', {
                         receiverId: this.item.receiverId,
                         userId: this.item.userId,
@@ -117,7 +140,11 @@
         border:1px solid #000;
     .editAddressTable
         text-align: left;
-    // border:1px solid #000;
+     // border:1px solid #000;
     .editAddressButton
         margin-right:100px
+    .promptText
+        font-size 14px
+        margin-left 20px
+        color red
 </style>
