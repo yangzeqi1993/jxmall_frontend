@@ -22,7 +22,7 @@ export default new Router({
             component: Login
         },
         {
-            path: '/myjx',
+            path: '/myJx',
             name: 'MyJX',
             meta:{auth:true},
             component: MyJX
@@ -31,11 +31,10 @@ export default new Router({
         {
             path: '/register',
             name: 'Register',
-            meta:{auth:true},
             component: Register
         },
         {
-            path: '/myinfo',
+            path: '/myInfo',
             name: 'MyInfo',
             meta:{auth:true},
             // route level code-splitting
@@ -70,7 +69,7 @@ router.beforeEach((to,from,next) => {
         if(to.name == "Login"){
             next();
         }else {
-            if(sessionStorage.getItem("data")){
+            if(sessionStorage.getItem("getUserName")){
                 // 访问服务器缓存数据，判断当前data是否失效
                 next();
             }else {

@@ -1,48 +1,46 @@
 <template>
-    <div id="editAddress">
+<div id="editAddress">
+    <h1>编辑收货地址</h1>
+    <table class="editAddressTable">
+        <tr>
+            <td><label>姓名：</label></td>
+            <td>
+                <label>
+                    <input type="text" onkeyup="value=value.replace(/[^\u4E00-\u9FA5\a-zA-Z]/gi,'')" v-model="item.receiverName"/>
+                </label>
+                <span style="color:red">*</span>
+            </td>
+        </tr>
+        <tr>
+            <td><label>联系电话：</label></td>
+            <td>
+                <!--使用onkeyup方法和type=tel，使文本框只能输入数字-->
+                <label><input type="tel" onkeyup="value=value.replace(/[^\d]/g,'')"  v-model="item.receiverPhone" /></label>
+                <span style="color:red">*</span>
+            </td>
+        </tr>
+        <tr>
+            <td><label>收货地址：</label></td>
+            <td>
+                <label><input type="text" v-model="item.receiverAddressInfo" style="width:400px;" maxlength="1000"/></label>
+                <span style="color:red">*</span>
+            </td>
+        </tr>
+        <tr>
+            <td><label>id:</label></td>
+            <td>
+                <span>{{item.receiverId}}</span>
+                <label>（模拟后台，测试用）</label>
+            </td>
+        </tr>
+    </table>
 
-        <h1>编辑收货地址</h1>
-
-        <table class="editAddressTable">
-            <tr>
-                <td><label>姓名：</label></td>
-                <td>
-                    <label>
-                        <input type="text" onkeyup="value=value.replace(/[^\u4E00-\u9FA5\a-zA-Z]/gi,'')" v-model="item.receiverName"/>
-                    </label>
-                    <span style="color:red">*</span>
-                </td>
-            </tr>
-            <tr>
-                <td><label>联系电话：</label></td>
-                <td>
-                    <!--使用onkeyup方法和type=tel，使文本框只能输入数字-->
-                    <label><input type="tel" onkeyup="value=value.replace(/[^\d]/g,'')"  v-model="item.receiverPhone" /></label>
-                    <span style="color:red">*</span>
-                </td>
-            </tr>
-            <tr>
-                <td><label>收货地址：</label></td>
-                <td>
-                    <label><input type="text" v-model="item.receiverAddressInfo" style="width:400px;" maxlength="1000"/></label>
-                    <span style="color:red">*</span>
-                </td>
-            </tr>
-            <tr>
-                <td><label>id:</label></td>
-                <td>
-                    <span>{{item.receiverId}}</span>
-                    <label>（模拟后台，测试用）</label>
-                </td>
-            </tr>
-        </table>
-
-        <div>
-            <button type="submit" v-on:click="_cancel" class="editAddressButton">取消编辑</button>
-            <button type="submit" v-on:click="_save" class="editAddressButton">保存地址</button>
-        </div>
-
+    <div>
+        <button type="submit" v-on:click="_cancel" class="editAddressButton">取消编辑</button>
+        <button type="submit" v-on:click="_save" class="editAddressButton">保存地址</button>
     </div>
+
+</div>
 </template>
 
 <script>
@@ -54,23 +52,21 @@
 
         data() {
             return {
+                getUserId:"",
                 item: ""
             }
         },
 
         mounted() {
+            this.getUserId = sessionStorage.getItem("getUserId");
             this.getData();
         },
 
         methods: {
             getData() {
-                let getUserId = 1;
                 let r = this.$route.query.id;
-
-                axios.get('/receiver/list/userId='+getUserId).then(response => {
-
+                axios.get('/receiver/list/userId='+this.getUserId).then(response => {
                     let itemList = response.data;
-
                     if(itemList && itemList.length > 0){
                         this.item = itemList[r]
                     }else {
@@ -105,7 +101,7 @@
                         console.log(error);
                     });
                 }
-            },
+            }
 
         }
     }
