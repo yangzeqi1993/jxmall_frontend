@@ -16,12 +16,11 @@
         </td>
       </tr>
       <tr>
-          <td></td>
+          <td>&nbsp</td>
           <td class="promptText">{{usernamePrompt}}</td>
-          <td></td>
+          <td>&nbsp</td>
           <td class="promptText">{{passwordPrompt}}</td>
       </tr>
-        <br>
 
       <tr>
         <td><label>邮箱：</label></td>
@@ -36,12 +35,11 @@
         </td>
       </tr>
        <tr>
-          <td></td>
+          <td>&nbsp</td>
           <td class="promptText">{{mailPrompt}}</td>
-          <td></td>
+          <td>&nbsp</td>
           <td class="promptText">{{phonePrompt}}</td>
        </tr>
-        <br>
 
       <tr>
           <td><label>姓名：</label></td>
@@ -56,7 +54,12 @@
               </select>
           </td>
       </tr>
-        <br>
+        <tr>
+            <td>&nbsp</td>
+            <td>&nbsp</td>
+            <td>&nbsp</td>
+            <td>&nbsp</td>
+        </tr>
 
         <tr>
         <td><label>地址：</label></td>
@@ -68,10 +71,10 @@
           <label><input type="text" id="userId" maxlength="50" /></label>
         </td>
       </tr>
-        <br>
-        <br>
 
     </table>
+      <br/>
+      <br/>
     <a>
       <button type="submit" v-on:click="_register" style="margin-right:100px">注册 </button>
     </a>
@@ -112,6 +115,7 @@
           _inputUsername: function(){
             if(!this.checkUserName()) {
                this.usernamePrompt = "用户名只能为数字和字母的组合";
+               this.user_name = this.user_name.replace(/[^\d\a-zA-Z]/gi,'');
             }else {
                this.usernamePrompt = "";
             }
@@ -120,6 +124,7 @@
           _inputPassword: function(){
               if(!this.checkPassword()) {
                   this.passwordPrompt = "用户名只能为数字和字母的组合";
+                  this.user_password = this.user_password.replace(/[^\d\a-zA-Z]/gi,'');
               }else {
                   this.passwordPrompt = "";
               }
@@ -194,6 +199,7 @@
   #Register
      float center
   .registerTable
+     height 20px
      text-align right
   .registerShow
      width 200px
