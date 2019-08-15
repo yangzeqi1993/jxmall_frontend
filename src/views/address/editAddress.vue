@@ -6,7 +6,7 @@
             <td><label>姓名：</label></td>
             <td>
                 <label>
-                    <input type="text" onkeyup="value=value.replace(/[^\u4E00-\u9FA5\a-zA-Z]/gi,'')" v-model="item.receiverName" @click="_inputName"/>
+                    <input type="text" id="name" v-model="item.receiverName" @input="_inputName" @click="_inputName"/>
                 </label>
                 <span style="color:red">*</span>
                 <span class="promptText">{{namePrompt}}</span>
@@ -16,7 +16,7 @@
             <td><label>联系电话：</label></td>
             <td>
                 <!--使用onkeyup方法和type=tel，使文本框只能输入数字-->
-                <label><input type="tel" onkeyup="value=value.replace(/[^\d]/g,'')"  v-model="item.receiverPhone" @click="_inputPhone"/></label>
+                <label><input type="tel" id="phone"  v-model="item.receiverPhone" @input="_inputPhone" @click="_inputPhone"/></label>
                 <span style="color:red">*</span>
                 <span class="promptText">{{phonePrompt}}</span>
             </td>
@@ -72,28 +72,38 @@
         methods: {
             getData() {
                 let r = this.$route.query.id;
-                axios.get('/receiver/list/userId='+this.getUserId).then(response => {
+                axios.get('/receiver/list/userId=' + this.getUserId).then(response => {
                     let itemList = response.data;
-                    if(itemList && itemList.length > 0){
+                    if (itemList && itemList.length > 0) {
                         this.item = itemList[r]
-                    }else {
+                    } else {
                         console.log("not found data");
                     }
                 })
-                .catch(function (error) {
-                    console.log(error);
-                });
+                    .catch(function (error) {
+                        console.log(error);
+                    });
             },
 
-            _inputName: function(){
-                this.namePrompt = "";
+            checkName() {
+                return this.item.receiverName === this.item.receiverName.replace(/[^\u4E00-\u9FA5\a-zA-Z]/gi, '');
             },
 
-            _inputPhone: function(){
+            _inputName: function () {
+                if (!this.checkName()) {
+                    this.namePrompt = "用户名只能为数字和字母的组合";
+                    this.item.receiverName = this.item.receiverName.replace(/[^\u4E00-\u9FA5\a-zA-Z]/gi, '');
+                } else {
+                    this.namePrompt = "";
+                }
+            },
+
+            _inputPhone: function () {
+                this.item.receiverPhone = this.item.receiverPhone.replace(/[^\d]/g, '');
                 this.phonePrompt = "";
             },
 
-            _inputAddress: function(){
+            _inputAddress: function () {
                 this.addressPrompt = "";
             },
 
@@ -102,14 +112,16 @@
             },
 
             _save: function () {
-                if(!this.item.receiverName){
+                if (!this.item.receiverName) {
                     this.namePrompt = "姓名不能为空";
-                }else if(this.item.receiverPhone.length !== 11){
+                } else if (!this.checkName()) {
+                    this.namePrompt = "用户名只能为数字和字母的组合";
+                } else if (this.item.receiverPhone.length !== 11) {
                     this.phonePrompt = "请输入正确的手机号";
-                }else if(!this.item.receiverAddressInfo){
+                } else if (!this.item.receiverAddressInfo) {
                     this.addressPrompt = "收货地址不能为空";
-                }else{
-                    axios.put('/receiver/updReceiver/', {
+                } else {
+                    axios.put('/receiver/updReceiver', {
                         receiverId: this.item.receiverId,
                         userId: this.item.userId,
                         receiverName: this.item.receiverName,
@@ -122,10 +134,10 @@
                     })
                     .catch(function (error) {
                         console.log(error);
+                        alert("输入信息格式不正确。");
                     });
                 }
             }
-
         }
     }
 </script>

@@ -6,12 +6,12 @@
       <tr>
         <td><label>用户名：</label></td>
         <td class="registerShow">
-          <label><input type="text" id="AcctNo" maxlength="30" v-model="user_name" @input="_inputUsername" @click="_inputUsername"/></label>
+          <label><input type="text" id="acctNo" maxlength="30" v-model="user_name" @input="_inputUsername" @click="_inputUsername"/></label>
           <span style="color:red">*</span>
         </td>
         <td><label>密码：</label></td>
         <td class="registerShow">
-          <label><input type="text" id="PassWord" maxlength="12" v-model="user_password" @input="_inputPassword" @click="_inputPassword"/></label>
+          <label><input type="text" id="passWord" maxlength="12" v-model="user_password" @input="_inputPassword" @click="_inputPassword"/></label>
           <span style="color:red">*</span>
         </td>
       </tr>
@@ -25,7 +25,7 @@
       <tr>
         <td><label>邮箱：</label></td>
         <td class="registerShow">
-          <label><input type="text" id="userMail" maxlength="50" @change="_inputMail"/></label>
+          <label><input type="text" id="userEmail" maxlength="50" v-model="user_email" @click="_inputEmail"/></label>
           <span style="color:red">*</span>
         </td>
         <td><label>联系电话：</label></td>
@@ -36,7 +36,7 @@
       </tr>
        <tr>
           <td>&nbsp</td>
-          <td class="promptText">{{mailPrompt}}</td>
+          <td class="promptText">{{emailPrompt}}</td>
           <td>&nbsp</td>
           <td class="promptText">{{phonePrompt}}</td>
        </tr>
@@ -48,9 +48,9 @@
           </td>
           <td><label>性别：</label></td>
           <td class="registerShow">
-              <select style="width:50px">
-                  <option value="male">男</option>
-                  <option value="female">女</option>
+              <select style="width:50px" id="userSex">
+                  <option value="男">男</option>
+                  <option value="女">女</option>
               </select>
           </td>
       </tr>
@@ -94,11 +94,12 @@
         return {
           user_name:"",
           user_password:"",
+          user_email:"",
 
           usernamePrompt:"",
           passwordPrompt:"",
           phonePrompt:"",
-          mailPrompt:""
+          emailPrompt:""
         }
       },
 
@@ -111,6 +112,12 @@
           checkPassword(){
               return this.user_password === this.user_password.replace(/[^\d\a-zA-Z]/gi,'');
           },
+
+          checkUserEmail(){
+              let regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+              return regEmail.test(this.user_email);
+          },
+
 
           _inputUsername: function(){
             if(!this.checkUserName()) {
@@ -130,62 +137,90 @@
               }
           },
 
+          _inputEmail: function(){
+                  this.emailPrompt = "";
+          },
+
           _inputPhone: function(){
               this.phonePrompt = "";
           },
 
-          _inputMail: function(){
-              this.mailPrompt = "";
+
+          addPassword(){
+              axios.post('/userInfo/addUser/', {
+                  userId: document.getElementById("userId").value,
+                  userName: document.getElementById("acctNo").value,
+                  userPassword: document.getElementById("passWord").value
+              })
+                  .then(function (response) {
+                      console.log(response);
+                      window.location.href = "/";  // 新用户注册成功后在此处返回登录页面
+                  })
+                  .catch(function (error) {
+                      console.log(error);
+                      alert("输入信息格式不正确。");
+                  });
           },
 
-
           _register: function () {
-              let user_acct = document.getElementById("AcctNo").value;
-              let user_password = document.getElementById("PassWord").value;
-              let user_mail = document.getElementById("userMail").value;
+              let user_acct = document.getElementById("acctNo").value;
+              let user_password = document.getElementById("passWord").value;
+              let user_email = document.getElementById("userEmail").value;
               let user_phone = document.getElementById("userPhone").value;
 
               if(!user_acct){
                   this.usernamePrompt = "用户名不能为空";
+              } else if(!this.checkUserName()){
+                  this.usernamePrompt = "用户名只能为数字和字母的组合";
               } else if(!user_password){
                   this.passwordPrompt = "密码不能为空";
               } else if(!this.checkPassword()){
-                  this.passwordPrompt = "用户名只能为数字和字母的组合";
-              } else if(!user_mail){
-                  this.mailPrompt = "邮箱不能为空";
+                  this.passwordPrompt = "密码只能为数字和字母的组合";
+              } else if(!user_email){
+                  this.emailPrompt = "邮箱不能为空";
+              } else if(!this.checkUserEmail()){
+                  this.emailPrompt = "请输入正确的邮箱";
               } else if(!user_phone){
                   this.phonePrompt = "手机号不能为空";
               } else if(user_phone.length !== 11){
                   this.phonePrompt = "请输入正确的手机号";
               } else{
+                  this.checkUserEmail();
                   axios.post('/user/addUser/', {
                       userId: document.getElementById("userId").value,
                       userName: user_acct,
                       userPhone: user_phone,
                       userRealName: document.getElementById("actName").value,
-                      userMallName: document.getElementById("address").value,
+                      userMallName: user_email,
                       userSex: document.getElementById("userSex").value,
-                      userMail: user_mail,
+                      userEmail: user_email,
                       userAddress: document.getElementById("userAddress").value
                   })
-                  .then(function (response) {
+                  .then(response => {
+                      switch(response.data) {
+                          case "userName false":
+                              this.usernamePrompt = "用户名不能重复";
+                              break;
+                          case "userPhone false":
+                              this.phonePrompt = "手机号不能重复";
+                              break;
+                          case "userMallName false":
+                              this.emailPrompt= "邮箱不能重复";
+                              break;
+                          case "Success":
+                              alert("新用户可以注册！");
+                              this.addPassword();
+                              break;
+                          default:
+                              alert("请求异常");
+                      }
                       console.log(response);
                   })
                   .catch(function (error) {
                       console.log(error);
+                      alert("输入信息格式不正确。");
                   });
 
-                  axios.post('/user/addUser/', {
-                      userId: document.getElementById("userId").value,
-                      userName: document.getElementById("ActName").value,
-                      userPassword: user_password
-                  })
-                  .then(function (response) {
-                      console.log(response);
-                  })
-                  .catch(function (error) {
-                      console.log(error);
-                  });
               }
           }
       }
@@ -198,13 +233,18 @@
 <style lang="stylus" scoped>
   #Register
      float center
+     position absolute
+     width:1000px
+     left:50%
+     margin-left:-500px
   .registerTable
-     height 20px
      text-align right
+     margin-left:250px
   .registerShow
      width 200px
      text-align left
   .promptText
+     font-size 14px
      text-align left
      color red
 </style>

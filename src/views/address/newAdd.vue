@@ -115,6 +115,7 @@
                     })
                     .catch(function (error) {
                         console.log(error);
+                        alert("输入信息格式不正确。");
                     });
                 }
             }

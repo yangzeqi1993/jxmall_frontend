@@ -1,33 +1,30 @@
 <template>
   <div id="Login">
     <h1>{{ msg }}</h1>
-    <table id="loginTable">
+    <br/><br/><br/><br/>
+    <table class="loginTable">
       <tr>
         <td><label>用户名：</label></td>
-        <td>
-            <label><input type="text" id="AcctNo" maxlength="50" @click="_inputUsername"/></label>
+        <td class="loginShow">
+            <label><input type="text" id="AcctNo" v-model="AcctNo" maxlength="50" @click="_inputUsername"/></label>
           <span style="color:red">*</span>
         </td>
         <td><label>密码：</label></td>
-        <td>
+        <td class="loginShow">
             <label><input type="text" id="PassWord" maxlength="50" @click="_inputPassword"/></label>
           <span style="color:red">*</span>
         </td>
       <tr>
       <tr>
         <td></td>
-        <td><span style="color:red">{{usernamePrompt}}</span></td>
+        <td class="promptText"><span>{{usernamePrompt}}</span></td>
         <td></td>
-        <td><span style="color:red">{{passwordPrompt}}</span></td>
-      <tr>
-        <td><label>模拟主键ID：</label></td>
-        <td>
-            <label><input type="text" id="id"/></label>
-        </td>
+        <td class="promptText"><span>{{passwordPrompt}}</span></td>
       </tr>
     </table>
+    <br/><br/>
     <a>
-      <button type="submit" v-on:click="_commit">登录</button>
+      <button type="submit" class="loginButton" v-on:click="_commit">登录</button>
     </a>
     <router-link tag="a" :to="'/register'">注册</router-link>
   </div>
@@ -44,6 +41,7 @@
         data() {
            return {
            msg: '欢迎来到京西商城',
+           AcctNo:"",
            usernamePrompt:"",
            passwordPrompt:""
         };
@@ -54,6 +52,18 @@
     },
 
      methods: {
+       checkUserName(){
+         return this.AcctNo === this.AcctNo.replace(/[^\d\a-zA-Z]/gi,'');
+       },
+
+       _inputUsername: function(){
+         this.usernamePrompt = "";
+       },
+
+       _inputPassword: function(){
+         this.passwordPrompt = "";
+       },
+
 
        // 根据userID得到用户名userName
        getUserName(){
@@ -73,14 +83,6 @@
          });
        },
 
-        _inputUsername: function(){
-           this.usernamePrompt = "";
-        },
-
-        _inputPassword: function(){
-           this.passwordPrompt = "";
-        },
-
         _commit: function() {
 
            let acctNo = document.getElementById("AcctNo").value;
@@ -90,6 +92,8 @@
               console.log("账号不能为空！");
               this.usernamePrompt = "账号不能为空";
               this.passwordPrompt = "";
+           } else if(!this.checkUserName()){
+             this.usernamePrompt = "用户名只能为数字和字母的组合";
            } else if(!passWord) {
               console.log("密码不能为空！");
               this.usernamePrompt = "";
@@ -115,7 +119,6 @@
                  });
            }
         }
-
      }
   };
 </script>
@@ -123,30 +126,31 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="stylus">
-#Login
-  font-family 'Avenir', Helvetica, Arial, sans-serif
-  -webkit-font-smoothing antialiased
-  -moz-osx-font-smoothing grayscale
-  text-align center
-  color #2c3e50
-
-  h1, h2 {
-    font-weight: normal;
-  }
-
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-
-  li {
-    display: inline-block;
-    margin: 0 10px;
-  }
-
-  a {
+  #Login
+    font-family 'Avenir', Helvetica, Arial, sans-serif
+    -webkit-font-smoothing antialiased
+    -moz-osx-font-smoothing grayscale
+    text-align center
+    float center
+    position absolute
+    width:1000px
+    left:50%
+    margin-left:-500px
+    color #2c3e50
+  .loginTable
+    text-align right
+    margin-left:225px
+  .loginShow
+    width 200px
+    text-align left
+  .loginButton
+    margin-right:100px
+  .promptText
+    font-size 14px
+    text-align left
+    color red
+  a
     color: #42b983;
-  }
 </style>
 
 
