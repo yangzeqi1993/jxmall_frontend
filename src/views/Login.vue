@@ -1,6 +1,6 @@
 <template>
   <div id="Login">
-    <h1>{{ msg }}</h1>
+    <h1>来京西，有惊喜！</h1>
     <br/><br/><br/><br/>
     <div id="loginDiv">
       <br/><br/><br/>
@@ -35,7 +35,7 @@
       <br/><br/>
     </div>
     <br/><br/><br/>
-    <h1 style="color: darkmagenta"> Welcome to Jinxi Mall !</h1>
+    <h1 style="color: darkmagenta">{{ msg }}</h1>
   </div>
 </template>
 
@@ -79,25 +79,6 @@
          this.passwordPrompt = "";
        },
 
-
-       // 根据userID得到用户名userName
-       getUserName(){
-         let getUserId = sessionStorage.getItem("getUserId");
-         axios.get('/user/getUserName/userId='+getUserId).then(response => {
-           let getUserName = response.data;
-           if(getUserName.length>0){
-             window.sessionStorage.setItem('getUserName',getUserName);
-             window.location.href = "/MyJX";                         //登录后页面从这里跳转
-           }else {
-             console.log("not found data");
-             alert("系统出错/Login/getUserName()");
-           }
-         })
-         .catch(function (error) {
-           console.log(error);
-         });
-       },
-
         _commit: function() {
            let passWord = document.getElementById("PassWord").value;
            if(!this.user_name){
@@ -126,13 +107,14 @@
                       document.getElementById("PassWord").value = "";
                    }else {
                       // 把拿到的返回结果放在sessionStorage中
-                      window.sessionStorage.setItem('getUserId',response.data.userId);
+                      window.sessionStorage.setItem('getUserName',response.data.userName);
                       // 得到用户名userName并存储在sessionStorage中
-                      this.getUserName();
+                      window.location.href = "/MyJX";
                    }
                 })
                 .catch(function (error) {
                    console.log(error);
+                   alert("系统出错/Login/getUserName()");
                 });
            }
         }

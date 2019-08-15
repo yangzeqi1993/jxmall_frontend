@@ -134,7 +134,7 @@
           },
 
           checkMallName(){
-              return this.mall_name === this.mall_name.replace(/[^\a-zA-Z0-9\u4e00-\u9fa5]/gi, '');
+              return this.mall_name === this.mall_name.replace(/[^\u4E00-\u9FA5\a-zA-Z0-9]/gi, '');
           },
 
 
@@ -166,7 +166,7 @@
 
           _inputActName: function(){
               if(!this.checkActName()) {
-                  this.actnamePrompt = "用户名只能为数字和字母的组合";
+                  this.actnamePrompt = "用户名只能为汉字和字母的组合";
                   this.act_name = this.act_name.replace(/[^\u4E00-\u9FA5\a-zA-Z]/gi,'');
               }else {
                   this.actnamePrompt = "";
@@ -174,9 +174,9 @@
           },
 
           _inputMallName: function(){
-              if(!this.checkActName()) {
-                  this.mallnamePrompt = "用户名只能为数字和字母的组合";
-                  this.mall_name = this.mall_name.replace(/[^\a-zA-Z0-9\u4e00-\u9fa5]/gi,'');
+              if(!this.checkMallName()) {
+                  this.mallnamePrompt = "用户昵称只能由汉字、数字和字母的组成";
+                  this.mall_name = this.mall_name.replace(/[^\u4E00-\u9FA5\a-zA-Z0-9]/gi, '');
               }else {
                   this.mallnamePrompt = "";
               }
@@ -185,7 +185,7 @@
 
           addPassword(){
               axios.post('/userInfo/addUser/', {
-                  userId: "",
+                  userId: "",  // 在后端从user表中得到userId
                   userName: this.user_name,
                   userPassword: this.user_password,
               })

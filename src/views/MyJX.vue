@@ -11,6 +11,7 @@
 </template>
 
 <script>
+  import axios from "axios";
 
   export default {
 
@@ -27,11 +28,6 @@
       this.getUserName = sessionStorage.getItem("getUserName");
     },
 
-    methods: {
-      _out:function() {
-
-      }
-    }
   };
 
 </script>

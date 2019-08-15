@@ -34,7 +34,8 @@
     </table>
     <br/><br/>
     <div>
-        <button type="submit" v-on:click="_commit">提交新地址</button>
+        <button type="submit" v-on:click="_commit" class="newAddButton">提交新地址</button>
+        <button type="submit" v-on:click="_cancel" class="newAddButton">取消新增</button>
     </div>
 </div>
 </template>
@@ -49,8 +50,6 @@
 
         data() {
             return {
-                getUserId:"",
-
                 namePrompt:"",
                 phonePrompt:"",
                 addressPrompt:"",
@@ -66,7 +65,7 @@
         },
 
         mounted() {
-            this.getUserId = sessionStorage.getItem("getUserId");
+            this.getUserName = sessionStorage.getItem("getUserName");
         },
 
         methods: {
@@ -92,7 +91,11 @@
                 this.addressPrompt = "";
             },
 
-            _commit: function() {
+            _cancel:function(){
+                window.location.href = "/myAddress";
+            },
+
+            _commit: function(){
 
                 if(!this.receiverName){
                     this.namePrompt = "姓名不能为空";
@@ -103,21 +106,21 @@
                 }else if(!this.receiverAddressInfo){
                     this.addressPrompt = "收货地址不能为空";
                 }else{
-                    axios.post('/receiver/add/', {
-                        receiverId: "",
-                        userId: this.getUserId,
+                    axios.post('/receiver/add/userName=' + this.getUserName, {
+                        receiverId: "", // 系统自动生成
+                        userId: "",     // 在后端从user表中得到userId
                         receiverName: this.receiverName,
                         receiverPhone: this.receiverPhone,
-                        receiverAddressInfo: this.receiverAddressInfo
+                        receiverAddressInfo: this.receiverAddressInfo,
                 })
-                    .then(function (response) {
-                        console.log(response);
-                        window.location.href = "/myAddress";
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                        alert("输入信息格式不正确。");
-                    });
+                .then(function (response) {
+                    console.log(response);
+                    window.location.href = "/myAddress";
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    alert("输入信息格式不正确。");
+                });
                 }
             }
 
@@ -137,6 +140,8 @@
     .newAddTable
         text-align: left;
         margin-left:40px;
+    .newAddButton
+        margin-right:100px
     .promptText
         font-size 14px
         margin-left 20px

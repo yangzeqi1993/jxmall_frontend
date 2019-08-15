@@ -32,8 +32,8 @@
     </table>
     <br/><br/>
     <div>
-        <button type="submit" v-on:click="_cancel" class="editAddressButton">取消编辑</button>
         <button type="submit" v-on:click="_save" class="editAddressButton">保存地址</button>
+        <button type="submit" v-on:click="_cancel" class="editAddressButton">取消编辑</button>
     </div>
 
 </div>
@@ -52,20 +52,19 @@
                 phonePrompt:"",
                 addressPrompt:"",
 
-                getUserId:"",
                 item: ""
             }
         },
 
         mounted() {
-            this.getUserId = sessionStorage.getItem("getUserId");
+            this.getUserName = sessionStorage.getItem("getUserName");
             this.getData();
         },
 
         methods: {
             getData() {
                 let r = this.$route.query.id;
-                axios.get('/receiver/list/userId=' + this.getUserId).then(response => {
+                axios.get('/receiver/list/userName=' + this.getUserName).then(response => {
                     let itemList = response.data;
                     if (itemList && itemList.length > 0) {
                         this.item = itemList[r]
@@ -73,9 +72,9 @@
                         console.log("not found data");
                     }
                 })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                .catch(function (error) {
+                    console.log(error);
+                });
             },
 
             checkName() {
@@ -101,7 +100,7 @@
             },
 
             _cancel: function () {
-                window.location.href = "/address";
+                window.location.href = "/myAddress";
             },
 
             _save: function () {

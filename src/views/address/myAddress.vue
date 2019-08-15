@@ -45,18 +45,20 @@
 
         data() {
             return {
-                getUserId:"",
+                getUserName:"",
                 radioId:"",
                 itemList: []
             }
         },
         mounted() {
-            this.getUserId = sessionStorage.getItem("getUserId");
+            this.getUserName = sessionStorage.getItem("getUserName");
             this.getData();
         },
+
         methods: {
+
             getData() {
-                axios.get('/receiver/list/userId='+this.getUserId)
+                axios.get('/receiver/list/userName='+this.getUserName)
                     .then(response => {
                     //this.itemList = JSON.parse(response.data);
                     this.itemList = response.data;
@@ -82,7 +84,7 @@
 
             _delete: function(radioId){
                 console.log('被选中的值为:'+ radioId);
-                axios.delete('/receiver/delReceiver/userId='+this.getUserId+'&receiverId='+radioId)
+                axios.delete('/receiver/delReceiver/userName='+this.getUserName+'&receiverId='+radioId)
                     .then(function (response) {
                         console.log(response);
                         window.location.reload();
