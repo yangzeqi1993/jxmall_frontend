@@ -32,7 +32,6 @@
         <button type="submit" class="myAddressButton" v-on:click="_add">新增地址</button>
         <button type="submit" class="myAddressButton" v-on:click="_delete(radioId)">删除地址</button>
     </div>
-
 </div>
 </template>
 
@@ -74,7 +73,7 @@
 
             _commit: function(){
                 // 待开发中。。。
-                alert( this.itemList);
+                alert("开发中，敬请期待！");
             },
 
             _add: function(){

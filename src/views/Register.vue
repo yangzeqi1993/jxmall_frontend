@@ -6,12 +6,12 @@
       <tr>
         <td><label>用户名：</label></td>
         <td class="registerShow">
-          <label><input type="text" id="acctNo" maxlength="30" v-model="user_name" @input="_inputUsername" @click="_inputUsername"/></label>
+          <label><input type="text" maxlength="30" v-model="user_name" @input="_inputUserName" @click="_inputUserName"/></label>
           <span style="color:red">*</span>
         </td>
         <td><label>密码：</label></td>
         <td class="registerShow">
-          <label><input type="text" id="passWord" maxlength="12" v-model="user_password" @input="_inputPassword" @click="_inputPassword"/></label>
+          <label><input type="text" maxlength="12" v-model="user_password" @input="_inputPassword" @click="_inputPassword"/></label>
           <span style="color:red">*</span>
         </td>
       </tr>
@@ -25,7 +25,7 @@
       <tr>
         <td><label>邮箱：</label></td>
         <td class="registerShow">
-          <label><input type="text" id="userEmail" maxlength="50" v-model="user_email" @click="_inputEmail"/></label>
+          <label><input type="text" maxlength="50" v-model="user_email" @click="_inputEmail"/></label>
           <span style="color:red">*</span>
         </td>
         <td><label>联系电话：</label></td>
@@ -44,33 +44,40 @@
       <tr>
           <td><label>姓名：</label></td>
           <td class="registerShow">
-            <label><input type="text" id="actName" maxlength="50" /></label>
+            <label><input type="text" v-model="act_name" maxlength="50" @input="_inputActName" @click="_inputActName"/></label>
           </td>
           <td><label>性别：</label></td>
           <td class="registerShow">
-              <select style="width:50px" id="userSex">
+              <select style="width:100px" id="userSex">
+                  <option disabled selected value="0">==请选择==</option>
                   <option value="男">男</option>
                   <option value="女">女</option>
               </select>
           </td>
       </tr>
         <tr>
-            <td>&nbsp</td>
-            <td>&nbsp</td>
-            <td>&nbsp</td>
-            <td>&nbsp</td>
+          <td>&nbsp</td>
+          <td class="promptText">{{actnamePrompt}}</td>
+          <td>&nbsp</td>
+          <td>&nbsp</td>
         </tr>
 
         <tr>
-        <td><label>地址：</label></td>
-        <td class="registerShow">
-          <label><input type="text" id="userAddress" maxlength="50" /></label>
-        </td>
-        <td><label>id：</label></td>
-        <td class="registerShow">
-          <label><input type="text" id="userId" maxlength="50" /></label>
-        </td>
-      </tr>
+            <td><label>昵称：</label></td>
+            <td class="registerShow">
+                <label><input type="text" v-model="mall_name" maxlength="100" @input="_inputMallName" @click="_inputMallName"/></label>
+            </td>
+            <td><label>地址：</label></td>
+            <td class="registerShow">
+              <label><input type="text" id="userAddress" maxlength="50" /></label>
+            </td>
+       </tr>
+        <tr>
+            <td>&nbsp</td>
+            <td class="promptText">{{mallnamePrompt}}</td>
+            <td>&nbsp</td>
+            <td>&nbsp</td>
+        </tr>
 
     </table>
       <br/>
@@ -95,11 +102,15 @@
           user_name:"",
           user_password:"",
           user_email:"",
+          act_name:"",
+          mall_name:"",
 
           usernamePrompt:"",
           passwordPrompt:"",
           phonePrompt:"",
-          emailPrompt:""
+          emailPrompt:"",
+          actnamePrompt:"",
+          mallnamePrompt:"",
         }
       },
 
@@ -118,8 +129,16 @@
               return regEmail.test(this.user_email);
           },
 
+          checkActName(){
+              return this.act_name === this.act_name.replace(/[^\u4E00-\u9FA5\a-zA-Z]/gi, '');
+          },
 
-          _inputUsername: function(){
+          checkMallName(){
+              return this.mall_name === this.mall_name.replace(/[^\a-zA-Z0-9\u4e00-\u9fa5]/gi, '');
+          },
+
+
+          _inputUserName: function(){
             if(!this.checkUserName()) {
                this.usernamePrompt = "用户名只能为数字和字母的组合";
                this.user_name = this.user_name.replace(/[^\d\a-zA-Z]/gi,'');
@@ -138,19 +157,37 @@
           },
 
           _inputEmail: function(){
-                  this.emailPrompt = "";
+              this.emailPrompt = "";
           },
 
           _inputPhone: function(){
               this.phonePrompt = "";
           },
 
+          _inputActName: function(){
+              if(!this.checkActName()) {
+                  this.actnamePrompt = "用户名只能为数字和字母的组合";
+                  this.act_name = this.act_name.replace(/[^\u4E00-\u9FA5\a-zA-Z]/gi,'');
+              }else {
+                  this.actnamePrompt = "";
+              }
+          },
+
+          _inputMallName: function(){
+              if(!this.checkActName()) {
+                  this.mallnamePrompt = "用户名只能为数字和字母的组合";
+                  this.mall_name = this.mall_name.replace(/[^\a-zA-Z0-9\u4e00-\u9fa5]/gi,'');
+              }else {
+                  this.mallnamePrompt = "";
+              }
+          },
+
 
           addPassword(){
               axios.post('/userInfo/addUser/', {
-                  userId: document.getElementById("userId").value,
-                  userName: document.getElementById("acctNo").value,
-                  userPassword: document.getElementById("passWord").value
+                  userId: "",
+                  userName: this.user_name,
+                  userPassword: this.user_password,
               })
                   .then(function (response) {
                       console.log(response);
@@ -163,20 +200,17 @@
           },
 
           _register: function () {
-              let user_acct = document.getElementById("acctNo").value;
-              let user_password = document.getElementById("passWord").value;
-              let user_email = document.getElementById("userEmail").value;
               let user_phone = document.getElementById("userPhone").value;
 
-              if(!user_acct){
+              if(!this.user_name){
                   this.usernamePrompt = "用户名不能为空";
               } else if(!this.checkUserName()){
                   this.usernamePrompt = "用户名只能为数字和字母的组合";
-              } else if(!user_password){
+              } else if(!this.user_password){
                   this.passwordPrompt = "密码不能为空";
               } else if(!this.checkPassword()){
                   this.passwordPrompt = "密码只能为数字和字母的组合";
-              } else if(!user_email){
+              } else if(!this.user_email){
                   this.emailPrompt = "邮箱不能为空";
               } else if(!this.checkUserEmail()){
                   this.emailPrompt = "请输入正确的邮箱";
@@ -184,16 +218,20 @@
                   this.phonePrompt = "手机号不能为空";
               } else if(user_phone.length !== 11){
                   this.phonePrompt = "请输入正确的手机号";
+              } else if(!this.act_name && !this.checkActName()){
+                  this.actnamePrompt = "姓名只由汉字和字母的组成";
+              } else if(!this.mall_name && !this.checkMallName()){
+                  this.mallnamePrompt = "用户昵称只能由汉字、数字和字母的组成";
               } else{
                   this.checkUserEmail();
                   axios.post('/user/addUser/', {
-                      userId: document.getElementById("userId").value,
-                      userName: user_acct,
-                      userPhone: user_phone,
-                      userRealName: document.getElementById("actName").value,
-                      userMallName: user_email,
+                      userId: "",
+                      userName: this.user_name,
+                      userPhone: this.user_password,
+                      userRealName: this.act_name,
+                      userMallName: this.user_email,
                       userSex: document.getElementById("userSex").value,
-                      userEmail: user_email,
+                      userEmail: this.user_email,
                       userAddress: document.getElementById("userAddress").value
                   })
                   .then(response => {
