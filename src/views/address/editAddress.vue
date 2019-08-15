@@ -29,15 +29,8 @@
                 <span class="promptText">{{addressPrompt}}</span>
             </td>
         </tr>
-        <tr>
-            <td><label>id:</label></td>
-            <td>
-                <span>{{item.receiverId}}</span>
-                <label>（模拟后台，测试用）</label>
-            </td>
-        </tr>
     </table>
-
+    <br/><br/>
     <div>
         <button type="submit" v-on:click="_cancel" class="editAddressButton">取消编辑</button>
         <button type="submit" v-on:click="_save" class="editAddressButton">保存地址</button>

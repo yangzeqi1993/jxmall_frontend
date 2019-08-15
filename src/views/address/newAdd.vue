@@ -6,7 +6,7 @@
             <td><span>姓名：</span></td>
             <td>
                 <label>
-                    <input type="text" onkeyup="value=value.replace(/[^\u4E00-\u9FA5\a-zA-Z]/gi,'')" id="name" @click="_inputName"/>
+                    <input type="text" id="name" v-model="receiverName" @input="_inputName" @click="_inputName"/>
                 </label>
                 <span style="color:red">*</span>
                 <span class="promptText">{{namePrompt}}</span>
@@ -17,7 +17,7 @@
             <td>
                 <!--使用onkeyup方法和type=tel，使文本框只能输入数字-->
                 <label>
-                    <input type="tel" onkeyup="value=value.replace(/[^\d]/g,'')" id="phone"  @click="_inputPhone"/>
+                    <label><input type="tel" id="phone"  v-model="receiverPhone" @input="_inputPhone" @click="_inputPhone"/></label>
                 </label>
                 <span style="color:red">*</span>
                 <span class="promptText">{{phonePrompt}}</span>
@@ -26,20 +26,13 @@
         <tr>
             <td><span>收货地址：</span></td>
             <td>
-                <label><input type="text" id="address" style="width:400px;" maxlength="1000" @click="_inputAddress"/></label>
+                <label><input type="text" v-model="receiverAddressInfo" style="width:400px;" maxlength="1000" @click="_inputAddress"/></label>
                 <span style="color:red">*</span>
                 <span class="promptText">{{addressPrompt}}</span>
             </td>
         </tr>
-        <tr>
-            <td><span>id：</span></td>
-            <td>
-                <label><input type="text" id="id"/></label>
-                <span>（模拟后台，测试用）</span>
-            </td>
-        </tr>
     </table>
-
+    <br/><br/>
     <div>
         <button type="submit" v-on:click="_commit">提交新地址</button>
     </div>
@@ -77,11 +70,21 @@
         },
 
         methods: {
-            _inputName: function(){
-                this.namePrompt = "";
+            checkName() {
+                return this.receiverName === this.receiverName.replace(/[^\u4E00-\u9FA5\a-zA-Z]/gi, '');
+            },
+
+            _inputName: function () {
+                if (!this.checkName()) {
+                    this.namePrompt = "用户名只能为数字和字母的组合";
+                    this.receiverName = this.receiverName.replace(/[^\u4E00-\u9FA5\a-zA-Z]/gi, '');
+                } else {
+                    this.namePrompt = "";
+                }
             },
 
             _inputPhone: function(){
+                this.receiverPhone = this.receiverPhone.replace(/[^\d]/g, '');
                 this.phonePrompt = "";
             },
 
@@ -91,23 +94,21 @@
 
             _commit: function() {
 
-                let getName = document.getElementById("name").value;
-                let getPhone = document.getElementById("phone").value;
-                let getAddress = document.getElementById("address").value;
-
-                if(!getName){
+                if(!this.receiverName){
                     this.namePrompt = "姓名不能为空";
-                }else if(getPhone.length !== 11){
+                } else if (!this.checkName()) {
+                    this.namePrompt = "用户名只能为数字和字母的组合";
+                }else if(this.receiverPhone.length !== 11){
                     this.phonePrompt = "请输入正确的手机号";
-                }else if(!getAddress){
+                }else if(!this.receiverAddressInfo){
                     this.addressPrompt = "收货地址不能为空";
                 }else{
                     axios.post('/receiver/add/', {
-                        receiverId: document.getElementById("id").value,
+                        receiverId: "",
                         userId: this.getUserId,
-                        receiverName: getName,
-                        receiverPhone: getPhone,
-                        receiverAddressInfo: getAddress
+                        receiverName: this.receiverName,
+                        receiverPhone: this.receiverPhone,
+                        receiverAddressInfo: this.receiverAddressInfo
                 })
                     .then(function (response) {
                         console.log(response);
