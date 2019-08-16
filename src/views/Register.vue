@@ -1,6 +1,7 @@
 <template>
   <div id="Register">
     <h1>用户注册</h1>
+     <br/>
     <table class="registerTable">
 
       <tr>
@@ -9,18 +10,35 @@
           <label><input type="text" maxlength="30" v-model="user_name" @input="_inputUserName" @click="_inputUserName"/></label>
           <span style="color:red">*</span>
         </td>
+          <td class="promptText">{{usernamePrompt}}</td>
+      </tr>
+
+        <tr>
         <td><label>密码：</label></td>
         <td class="registerShow">
           <label><input type="text" maxlength="12" v-model="user_password" @input="_inputPassword" @click="_inputPassword"/></label>
           <span style="color:red">*</span>
         </td>
+         <td class="promptText">{{passwordPrompt}}</td>
       </tr>
-      <tr>
-          <td>&nbsp</td>
-          <td class="promptText">{{usernamePrompt}}</td>
-          <td>&nbsp</td>
-          <td class="promptText">{{passwordPrompt}}</td>
-      </tr>
+
+        <tr>
+            <td><label>确认密码：</label></td>
+            <td class="registerShow">
+                <label><input type="text" maxlength="12" v-model="confirm_password" @input="_inputConfirmPassword" @click="_inputConfirmPassword"/></label>
+                <span style="color:red">*</span>
+            </td>
+            <td class="promptText">{{checkpasswordPrompt}}</td>
+        </tr>
+
+        <tr>
+            <td><label>联系电话：</label></td>
+            <td class="registerShow">
+                <label><input type="tel" onkeyup="value=value.replace(/[^\d]/g,'')" id="userPhone" @click="_inputPhone"/></label>
+                <span style="color:red">*</span>
+            </td>
+            <td class="promptText">{{phonePrompt}}</td>
+        </tr>
 
       <tr>
         <td><label>邮箱：</label></td>
@@ -28,24 +46,19 @@
           <label><input type="text" maxlength="50" v-model="user_email" @click="_inputEmail"/></label>
           <span style="color:red">*</span>
         </td>
-        <td><label>联系电话：</label></td>
-        <td class="registerShow">
-          <label><input type="tel" onkeyup="value=value.replace(/[^\d]/g,'')" id="userPhone" @click="_inputPhone"/></label>
-          <span style="color:red">*</span>
-        </td>
-      </tr>
-       <tr>
-          <td>&nbsp</td>
           <td class="promptText">{{emailPrompt}}</td>
-          <td>&nbsp</td>
-          <td class="promptText">{{phonePrompt}}</td>
-       </tr>
+      </tr>
+
 
       <tr>
           <td><label>姓名：</label></td>
           <td class="registerShow">
             <label><input type="text" v-model="act_name" maxlength="50" @input="_inputActName" @click="_inputActName"/></label>
           </td>
+          <td class="promptText">{{actnamePrompt}}</td>
+      </tr>
+
+        <tr>
           <td><label>性别：</label></td>
           <td class="registerShow">
               <select style="width:100px" id="userSex">
@@ -54,30 +67,26 @@
                   <option value="女">女</option>
               </select>
           </td>
+            <td></td>
       </tr>
-        <tr>
-          <td>&nbsp</td>
-          <td class="promptText">{{actnamePrompt}}</td>
-          <td>&nbsp</td>
-          <td>&nbsp</td>
-        </tr>
+
 
         <tr>
             <td><label>昵称：</label></td>
             <td class="registerShow">
                 <label><input type="text" v-model="mall_name" maxlength="100" @input="_inputMallName" @click="_inputMallName"/></label>
             </td>
+            <td class="promptText">{{mallnamePrompt}}</td>
+        </tr>
+
+        <tr>
             <td><label>地址：</label></td>
             <td class="registerShow">
               <label><input type="text" id="userAddress" maxlength="50" /></label>
             </td>
+            <td></td>
        </tr>
-        <tr>
-            <td>&nbsp</td>
-            <td class="promptText">{{mallnamePrompt}}</td>
-            <td>&nbsp</td>
-            <td>&nbsp</td>
-        </tr>
+
 
     </table>
       <br/>
@@ -101,12 +110,14 @@
         return {
           user_name:"",
           user_password:"",
+          confirm_password:"",
           user_email:"",
           act_name:"",
           mall_name:"",
 
           usernamePrompt:"",
           passwordPrompt:"",
+          checkpasswordPrompt:"",
           phonePrompt:"",
           emailPrompt:"",
           actnamePrompt:"",
@@ -121,7 +132,12 @@
           },
 
           checkPassword(){
-              return this.user_password === this.user_password.replace(/[^\d\a-zA-Z]/gi,'');
+              let regPassword = /^[a-zA-Z0-9]{6,12}$/;
+              return regPassword.test(this.user_password);
+          },
+
+          checkConfirmPassword(){
+              return this.confirm_password === this.user_password;
           },
 
           checkUserEmail(){
@@ -150,18 +166,26 @@
           _inputPassword: function(){
               if(!this.checkPassword()) {
                   this.passwordPrompt = "用户名只能为数字和字母的组合";
-                  this.user_password = this.user_password.replace(/[^\d\a-zA-Z]/gi,'');
+                  // this.user_password = this.user_password.replace(/[^\d\a-zA-Z]/gi,'');
               }else {
                   this.passwordPrompt = "";
               }
           },
 
-          _inputEmail: function(){
-              this.emailPrompt = "";
+          _inputConfirmPassword: function(){
+              if(!this.checkConfirmPassword()) {
+                  this.checkpasswordPrompt = "密码输入不一致";
+              }else {
+                  this.checkpasswordPrompt = "";
+              }
           },
 
           _inputPhone: function(){
               this.phonePrompt = "";
+          },
+
+          _inputEmail: function(){
+              this.emailPrompt = "";
           },
 
           _inputActName: function(){
@@ -180,6 +204,16 @@
               }else {
                   this.mallnamePrompt = "";
               }
+          },
+
+          clearAllPrompt: function(){
+              this.usernamePrompt = "";
+              this.passwordPrompt = "";
+              this.checkpasswordPrompt = "";
+              this.phonePrompt = "";
+              this.emailPrompt = "";
+              this.actnamePrompt = "";
+              this.mallnamePrompt = "";
           },
 
 
@@ -205,25 +239,27 @@
               if(!this.user_name){
                   this.usernamePrompt = "用户名不能为空";
               } else if(!this.checkUserName()){
-                  this.usernamePrompt = "用户名只能为数字和字母的组合";
+                  this.usernamePrompt = "用户名只能为数字或字母的组合";
               } else if(!this.user_password){
                   this.passwordPrompt = "密码不能为空";
               } else if(!this.checkPassword()){
                   this.passwordPrompt = "密码只能为数字和字母的组合";
-              } else if(!this.user_email){
-                  this.emailPrompt = "邮箱不能为空";
-              } else if(!this.checkUserEmail()){
-                  this.emailPrompt = "请输入正确的邮箱";
+              } else if(!this.checkConfirmPassword()){
+                  this.checkpasswordPrompt = "密码输入不一致";
               } else if(!user_phone){
                   this.phonePrompt = "手机号不能为空";
               } else if(user_phone.length !== 11){
                   this.phonePrompt = "请输入正确的手机号";
+              } else if(!this.user_email){
+                  this.emailPrompt = "邮箱不能为空";
+              } else if(!this.checkUserEmail()){
+                  this.emailPrompt = "请输入正确的邮箱";
               } else if(!this.act_name && !this.checkActName()){
                   this.actnamePrompt = "姓名只由汉字和字母的组成";
               } else if(!this.mall_name && !this.checkMallName()){
                   this.mallnamePrompt = "用户昵称只能由汉字、数字和字母的组成";
               } else{
-                  this.checkUserEmail();
+                  this.clearAllPrompt();
                   axios.post('/user/addUser/', {
                       userId: "",
                       userName: this.user_name,
@@ -246,7 +282,7 @@
                               this.emailPrompt= "邮箱不能重复";
                               break;
                           case "Success":
-                              alert("新用户可以注册！");
+                              alert("新用户注册成功！");
                               this.addPassword();
                               break;
                           default:
@@ -279,7 +315,7 @@
      text-align right
      margin-left:250px
   .registerShow
-     width 200px
+     width 300px
      text-align left
   .promptText
      font-size 14px

@@ -101,15 +101,23 @@
                    userPassword:passWord,
                 })
                 .then(response => {
-                   if(!response.data){
-                      //console.log("账号或密码错误。");
-                      alert("账号或密码错误。");
-                      document.getElementById("PassWord").value = "";
-                   }else {
+                  switch(response.data) {
+                    case "No user":
+                      alert("用户信息不存在！");
+                      break;
+                    case "Password error":
+                      alert("密码错误！");
+                      break;
+                    case "Success":
+                      alert("登录成功！");
                       // 把拿到的返回结果放在sessionStorage中
-                      window.sessionStorage.setItem('getUserName',response.data.userName);
+                      window.sessionStorage.setItem('getUserName',this.user_name);
                       // 得到用户名userName并存储在sessionStorage中
                       window.location.href = "/MyJX";
+                      break;
+                    default:
+                      alert("请求异常");
+
                    }
                 })
                 .catch(function (error) {

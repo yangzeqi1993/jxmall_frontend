@@ -113,13 +113,7 @@
                 } else if (!this.item.receiverAddressInfo) {
                     this.addressPrompt = "收货地址不能为空";
                 } else {
-                    axios.put('/receiver/updReceiver', {
-                        receiverId: this.item.receiverId,
-                        userId: this.item.userId,
-                        receiverName: this.item.receiverName,
-                        receiverPhone: this.item.receiverPhone,
-                        receiverAddressInfo: this.item.receiverAddressInfo
-                    })
+                    axios.put('/receiver/updReceiver', this.item)
                     .then(function (response) {
                         console.log(response);
                         window.location.href = '/myAddress';
