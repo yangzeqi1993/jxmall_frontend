@@ -118,7 +118,6 @@
                       break;
                     default:
                       alert("请求异常");
-
                    }
                 })
                 .catch(function (error) {

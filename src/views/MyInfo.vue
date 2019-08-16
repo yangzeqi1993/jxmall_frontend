@@ -8,7 +8,7 @@
           <input
             type="text"
             v-model="user.userName"
-            onkeyup="value=value.replace(/[^\u4E00-\u9FA5\a-zA-Z]/gi,'')"
+            onkeyup="value=value.replace(/[^\a-zA-Z0-9]/gi,'')"
             v-bind:disabled="readonly"
             maxlength="30"
             id="UserName"
@@ -74,9 +74,9 @@
         </td>
       </tr>
     </table>
-    <br />
-    <button v-on:click="cancel()">取消</button>
-    <button v-on:click="modify()">编辑</button> |
+    <br/>
+    <button v-on:click="cancel()" v-show="!readonly">取消</button>
+    <button v-on:click="modify()" v-show="readonly">编辑</button> |
     <button v-on:click="submit()">提交</button>
   </div>
 </template>
@@ -111,7 +111,7 @@ export default {
     },
 
     cancel(){
-      window.location.reload();
+      this.readonly = true;
     },
 
     modify() {
