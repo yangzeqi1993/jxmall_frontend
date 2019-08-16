@@ -34,7 +34,7 @@
         <tr>
             <td><label>联系电话：</label></td>
             <td class="registerShow">
-                <label><input type="tel" onkeyup="value=value.replace(/[^\d]/g,'')" id="userPhone" @click="_inputPhone"/></label>
+                <label><input type="tel" onkeyup="value=value.replace(/[^\d]/g,'')" v-model="user_phone" @click="_inputPhone"/></label>
                 <span style="color:red">*</span>
             </td>
             <td class="promptText">{{phonePrompt}}</td>
@@ -49,7 +49,6 @@
           <td class="promptText">{{emailPrompt}}</td>
       </tr>
 
-
       <tr>
           <td><label>姓名：</label></td>
           <td class="registerShow">
@@ -61,15 +60,14 @@
         <tr>
           <td><label>性别：</label></td>
           <td class="registerShow">
-              <select style="width:100px" id="userSex">
-                  <option disabled selected value="0">==请选择==</option>
+              <select style="width:100px" v-model="user_sex">
+                  <option disabled selected value="">==请选择==</option>
                   <option value="男">男</option>
                   <option value="女">女</option>
               </select>
           </td>
             <td></td>
       </tr>
-
 
         <tr>
             <td><label>昵称：</label></td>
@@ -82,11 +80,10 @@
         <tr>
             <td><label>地址：</label></td>
             <td class="registerShow">
-              <label><input type="text" id="userAddress" maxlength="50" /></label>
+              <label><input type="text" v-model="user_address" maxlength="50" /></label>
             </td>
             <td></td>
        </tr>
-
 
     </table>
       <br/>
@@ -111,9 +108,12 @@
           user_name:"",
           user_password:"",
           confirm_password:"",
+          user_phone:"",
           user_email:"",
           act_name:"",
+          user_sex:"",
           mall_name:"",
+          user_address:"",
 
           usernamePrompt:"",
           passwordPrompt:"",
@@ -234,7 +234,6 @@
           },
 
           _register: function () {
-              let user_phone = document.getElementById("userPhone").value;
 
               if(!this.user_name){
                   this.usernamePrompt = "用户名不能为空";
@@ -246,9 +245,9 @@
                   this.passwordPrompt = "密码只能为数字和字母的组合";
               } else if(!this.checkConfirmPassword()){
                   this.checkpasswordPrompt = "密码输入不一致";
-              } else if(!user_phone){
+              } else if(!this.user_phone){
                   this.phonePrompt = "手机号不能为空";
-              } else if(user_phone.length !== 11){
+              } else if(this.user_phone.length !== 11){
                   this.phonePrompt = "请输入正确的手机号";
               } else if(!this.user_email){
                   this.emailPrompt = "邮箱不能为空";
@@ -263,12 +262,12 @@
                   axios.post('/user/addUser/', {
                       userId: "",
                       userName: this.user_name,
-                      userPhone: this.user_password,
+                      userPhone: this.user_phone,
                       userRealName: this.act_name,
-                      userMallName: this.user_email,
-                      userSex: document.getElementById("userSex").value,
+                      userMallName: this.mall_name,
+                      userSex: this.user_sex,
                       userEmail: this.user_email,
-                      userAddress: document.getElementById("userAddress").value
+                      userAddress: this.user_address,
                   })
                   .then(response => {
                       switch(response.data) {
@@ -315,7 +314,7 @@
      text-align right
      margin-left:250px
   .registerShow
-     width 300px
+     width 200px
      text-align left
   .promptText
      font-size 14px

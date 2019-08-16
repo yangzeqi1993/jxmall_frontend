@@ -1,5 +1,5 @@
 <template>
-  <div class="UserInfo">
+  <div id="UserInfo">
     <h1>个人资料</h1>
     <table class="input" align="center">
       <tr>
@@ -34,7 +34,7 @@
           <input
             type="text"
             v-model="user.userMallName"
-            onkeyup="value=value.replace(/[^\u4E00-\u9FA5\a-zA-Z]/gi,'')"
+            onkeyup="value=value.replace(/[^\u4E00-\u9FA5\a-zA-Z0-9]/gi,'')"
             v-bind:disabled="readonly"
             maxlength="50"
             id="UserNickname"
@@ -75,6 +75,7 @@
       </tr>
     </table>
     <br />
+    <button v-on:click="cancel()">取消</button>
     <button v-on:click="modify()">编辑</button> |
     <button v-on:click="submit()">提交</button>
   </div>
@@ -109,6 +110,10 @@ export default {
         });
     },
 
+    cancel(){
+      window.location.reload();
+    },
+
     modify() {
       this.readonly = false;
     },
@@ -137,8 +142,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="stylus" scoped>
-.myUserInfoShow {
-  width: 100px;
-  text-decoration: underline;
-}
+  #myUserInfoShow
+    width: 100px
+    text-decoration: underline
 </style>
